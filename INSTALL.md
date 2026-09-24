@@ -46,6 +46,11 @@ for the owner code, or issue customer codes with `php artisan ashik:purchase-cod
 Codes and installation details are stored in `ashik_purchase_codes` and
 `ashik_installations`.
 
+The installer uses three steps: server requirements, application configuration,
+and database connection. Database credentials are tested, written to `.env`,
+and used for migrations. Installation events and failures are written to
+`storage/logs/install.log`.
+
 The package protects its own version-update routes with an install check. To
 protect every host-application route, also add the package middleware to the
 host application's main web route group.

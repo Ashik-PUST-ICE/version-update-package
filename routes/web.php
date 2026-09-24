@@ -11,6 +11,8 @@ Route::middleware(['web'])
     ->group(function () {
         Route::get('/', [InstallController::class, 'index'])->name('install');
         Route::get('configure', [InstallController::class, 'configure'])->name('install.configure');
+        Route::post('database', [InstallController::class, 'prepareDatabase'])->name('install.database.prepare');
+        Route::get('database', [InstallController::class, 'database'])->name('install.database');
         Route::post('/', [InstallController::class, 'install'])->name('install.store');
     });
 
