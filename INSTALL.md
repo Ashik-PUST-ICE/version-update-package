@@ -37,5 +37,9 @@ The own installer page is:
 It checks the environment, runs database migrations, creates the storage link,
 and writes both `ashik-installed` and the compatible `installed` marker in the storage directory.
 
+The package protects its own version-update routes with an install check. To
+protect every host-application route, also add the package middleware to the
+host application's main web route group.
+
 If the host application does not use the `super-admin` middleware alias, set a
 different middleware list in `config/version-updater.php`.

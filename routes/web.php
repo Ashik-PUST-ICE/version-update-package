@@ -2,6 +2,7 @@
 
 use Ashik\VersionUpdater\Http\Controllers\VersionUpdateController;
 use Ashik\VersionUpdater\Http\Controllers\InstallController;
+use Ashik\VersionUpdater\Http\Middleware\EnsureInstalled;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web'])
@@ -12,7 +13,7 @@ Route::middleware(['web'])
         Route::post('/', [InstallController::class, 'install'])->name('install.store');
     });
 
-Route::middleware(config('version-updater.middleware', ['web', 'auth']))
+Route::middleware(array_merge([EnsureInstalled::class], config('version-updater.middleware', ['web', 'auth'])))
     ->prefix(config('version-updater.prefix', 'erp/super-admin'))
     ->as('ashik.')
     ->group(function () {
