@@ -5,6 +5,7 @@ namespace Ashik\VersionUpdater\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Route;
 
 class InstallController extends Controller
 {
@@ -73,7 +74,9 @@ class InstallController extends Controller
         // Keep compatibility with the host application's existing marker.
         file_put_contents(storage_path('installed'), $installData);
 
-        return back()
+        $destination = Route::has('login') ? route('login') : url('/');
+
+        return redirect()->to($destination)
             ->with('success', 'Ashik system installed successfully.');
     }
 }
