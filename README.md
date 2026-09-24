@@ -53,4 +53,28 @@ ASHIK_BUILD_VERSION=2
 ASHIK_CURRENT_VERSION=1.1.0
 ```
 
+## Purchase codes
+
+The installer requires a purchase code by default. Set your private owner code
+in the seller application `.env`:
+
+```env
+ASHIK_REQUIRE_PURCHASE_CODE=true
+ASHIK_MASTER_PURCHASE_CODE=ASHIK-OWNER-CHANGE-ME
+```
+
+For each customer, run this after the package migration has run:
+
+```bash
+php artisan ashik:purchase-code --customer="Customer name" --email="customer@example.com"
+```
+
+Give the printed code only to that customer. The code is saved in the
+`ashik_purchase_codes` table and becomes used for the customer domain after
+installation. The installation itself is recorded in `ashik_installations`.
+
+For a fresh customer project where codes are issued from your seller system,
+you may also pass a comma-separated code list through `ASHIK_PURCHASE_CODES`.
+Do not commit the master code or customer codes to a public repository.
+
 The updater route is `/erp/super-admin/version-update` by default.

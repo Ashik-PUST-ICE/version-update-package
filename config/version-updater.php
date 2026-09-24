@@ -9,4 +9,8 @@ return [
     'build_version' => (int) env('ASHIK_BUILD_VERSION', config('app.build_version', 1)),
     'current_version' => env('ASHIK_CURRENT_VERSION', config('app.current_version', '1.0')),
     'disk' => 'local',
+    'require_purchase_code' => (bool) env('ASHIK_REQUIRE_PURCHASE_CODE', true),
+    'master_purchase_code' => env('ASHIK_MASTER_PURCHASE_CODE'),
+    'purchase_codes' => array_values(array_filter(array_map('trim', explode(',', (string) env('ASHIK_PURCHASE_CODES', ''))))),
+    'allow_code_reuse' => (bool) env('ASHIK_ALLOW_PURCHASE_CODE_REUSE', false),
 ];

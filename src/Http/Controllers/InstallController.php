@@ -5,7 +5,9 @@ namespace Ashik\VersionUpdater\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 
 class InstallController extends Controller
 {
@@ -25,6 +27,7 @@ class InstallController extends Controller
 
         return view('ashik-version-updater::configure', [
             'allPassed' => collect($requirements)->every(fn (array $requirement): bool => $requirement['passed']),
+            'purchaseCodeRequired' => (bool) config('version-updater.require_purchase_code', true),
         ]);
     }
 
@@ -52,10 +55,24 @@ class InstallController extends Controller
 
     public function install(Request $request)
     {
-        $request->validate([
+        $rules = [
             'app_name' => ['required', 'string', 'max:120'],
             'app_url' => ['required', 'url', 'max:255'],
-        ]);
+        ];
+
+        if (config('version-updater.require_purchase_code', true)) {
+            $rules['purchase_code'] = ['required', 'string', 'max:64'];
+        }
+
+        $request->validate($rules);
+
+        $purchaseCode = strtoupper(trim((string) $request->input('purchase_code')));
+
+        if (config('version-updater.require_purchase_code', true) && ! $this->validPurchaseCode($purchaseCode)) {
+            return back()->withInput()->withErrors([
+                'purchase_code' => 'Invalid or already used purchase code.',
+            ]);
+        }
 
         if (!collect($this->requirements())->every(fn (array $requirement): bool => $requirement['passed'])) {
             return back()->with('error', 'Please fix all server requirements before installation.');
@@ -63,6 +80,25 @@ class InstallController extends Controller
 
         Artisan::call('migrate', ['--force' => true]);
         Artisan::call('storage:link');
+
+        if (Schema::hasTable('ashik_installations')) {
+            DB::table('ashik_installations')->insert([
+                'app_name' => $request->app_name,
+                'app_url' => $request->app_url,
+                'purchase_code' => $purchaseCode,
+                'domain' => parse_url($request->app_url, PHP_URL_HOST),
+                'installed_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        if (Schema::hasTable('ashik_purchase_codes')) {
+            DB::table('ashik_purchase_codes')
+                ->where('code', $purchaseCode)
+                ->whereNull('used_at')
+                ->update(['used_domain' => parse_url($request->app_url, PHP_URL_HOST), 'used_at' => now(), 'updated_at' => now()]);
+        }
 
         $installData = json_encode([
             'installed_at' => now()->toIso8601String(),
@@ -78,5 +114,30 @@ class InstallController extends Controller
 
         return redirect()->to($destination)
             ->with('success', 'Ashik system installed successfully.');
+    }
+
+    private function validPurchaseCode(string $code): bool
+    {
+        if ($code === '') {
+            return false;
+        }
+
+        $masterCode = strtoupper(trim((string) config('version-updater.master_purchase_code')));
+        if ($masterCode !== '' && hash_equals($masterCode, $code)) {
+            return true;
+        }
+
+        $configuredCodes = array_map('strtoupper', config('version-updater.purchase_codes', []));
+        if (in_array($code, $configuredCodes, true)) {
+            return true;
+        }
+
+        if (! Schema::hasTable('ashik_purchase_codes')) {
+            return false;
+        }
+
+        $record = DB::table('ashik_purchase_codes')->where('code', $code)->where('status', 'active')->first();
+
+        return $record !== null && (config('version-updater.allow_code_reuse', false) || $record->used_at === null);
     }
 }

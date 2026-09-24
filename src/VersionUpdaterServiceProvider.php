@@ -14,6 +14,14 @@ class VersionUpdaterServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                Console\PurchaseCodeCommand::class,
+            ]);
+        }
+
         $this->publishes([
             __DIR__ . '/../config/version-updater.php' => config_path('version-updater.php'),
         ], 'ashik-version-updater-config');

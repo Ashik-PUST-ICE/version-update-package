@@ -41,6 +41,11 @@ pre-installation requirements first, then application configuration at
 It checks the environment, runs database migrations, creates the storage link,
 and writes both `ashik-installed` and the compatible `installed` marker in the storage directory.
 
+The installer also validates a purchase code. Configure `ASHIK_MASTER_PURCHASE_CODE`
+for the owner code, or issue customer codes with `php artisan ashik:purchase-code`.
+Codes and installation details are stored in `ashik_purchase_codes` and
+`ashik_installations`.
+
 The package protects its own version-update routes with an install check. To
 protect every host-application route, also add the package middleware to the
 host application's main web route group.
