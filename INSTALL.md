@@ -35,7 +35,7 @@ The own installer page is:
 ```
 
 It checks the environment, runs database migrations, creates the storage link,
-and writes an `ashik-installed` marker in the storage directory.
+and writes both `ashik-installed` and the compatible `installed` marker in the storage directory.
 
 If the host application does not use the `super-admin` middleware alias, set a
 different middleware list in `config/version-updater.php`.

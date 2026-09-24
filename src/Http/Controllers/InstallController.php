@@ -30,11 +30,15 @@ class InstallController extends Controller
         Artisan::call('migrate', ['--force' => true]);
         Artisan::call('storage:link');
 
-        file_put_contents(storage_path('ashik-installed'), json_encode([
+        $installData = json_encode([
             'installed_at' => now()->toIso8601String(),
             'app_name' => $request->app_name,
             'app_url' => $request->app_url,
-        ], JSON_PRETTY_PRINT));
+        ], JSON_PRETTY_PRINT);
+
+        file_put_contents(storage_path('ashik-installed'), $installData);
+        // Keep compatibility with the host application's existing marker.
+        file_put_contents(storage_path('installed'), $installData);
 
         return back()
             ->with('success', 'Ashik system installed successfully.');
