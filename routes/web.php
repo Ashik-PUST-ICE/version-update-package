@@ -10,6 +10,7 @@ Route::middleware(['web'])
     ->as('ashik.')
     ->group(function () {
         Route::get('/', [InstallController::class, 'index'])->name('install');
+        Route::get('configure', [InstallController::class, 'configure'])->name('install.configure');
         Route::post('/', [InstallController::class, 'install'])->name('install.store');
     });
 

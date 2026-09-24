@@ -18,6 +18,15 @@ class InstallController extends Controller
         ]);
     }
 
+    public function configure()
+    {
+        $requirements = $this->requirements();
+
+        return view('ashik-version-updater::configure', [
+            'allPassed' => collect($requirements)->every(fn (array $requirement): bool => $requirement['passed']),
+        ]);
+    }
+
     private function requirements(): array
     {
         $extension = static fn (string $name): bool => extension_loaded($name);

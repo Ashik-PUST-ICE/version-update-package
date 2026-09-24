@@ -34,6 +34,10 @@ The own installer page is:
 /ashik-install
 ```
 
+The installer uses the same two-step flow as a traditional Laravel installer:
+pre-installation requirements first, then application configuration at
+`/ashik-install/configure`, followed by the final installation action.
+
 It checks the environment, runs database migrations, creates the storage link,
 and writes both `ashik-installed` and the compatible `installed` marker in the storage directory.
 
