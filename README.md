@@ -66,7 +66,7 @@ ASHIK_MASTER_PURCHASE_CODE=ASHIK-OWNER-CHANGE-ME
 For each customer, run this after the package migration has run:
 
 ```bash
-php artisan ashik:purchase-code --customer="Customer name" --email="customer@example.com"
+php artisan ashik:purchase-code "Customer name" "customer@example.com"
 ```
 
 Give the printed code only to that customer. The code is saved in the

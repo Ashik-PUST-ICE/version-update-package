@@ -8,10 +8,7 @@ use Illuminate\Support\Str;
 
 class PurchaseCodeCommand extends Command
 {
-    protected $signature = 'ashik:purchase-code
-        {--customer= : Customer or company name}
-        {--email= : Customer email}
-        {--count=1 : Number of codes to generate}';
+    protected $signature = 'ashik:purchase-code {customer? : Customer or company name} {email? : Customer email} {--count=1 : Number of codes to generate}';
 
     protected $description = 'Generate customer purchase codes for Ashik installation';
 
@@ -31,8 +28,8 @@ class PurchaseCodeCommand extends Command
 
             DB::table('ashik_purchase_codes')->insert([
                 'code' => $code,
-                'customer_name' => $this->option('customer'),
-                'customer_email' => $this->option('email'),
+                'customer_name' => $this->argument('customer'),
+                'customer_email' => $this->argument('email'),
                 'status' => 'active',
                 'created_at' => now(),
                 'updated_at' => now(),
