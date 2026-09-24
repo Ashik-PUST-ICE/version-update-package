@@ -2,7 +2,7 @@
 
 return [
     'name' => env('ASHIK_VERSION_UPDATER_NAME', 'Ashik Version Update'),
-    'logo' => env('ASHIK_INSTALL_LOGO', 'assets/images/logo.png'),
+    'logo' => env('ASHIK_INSTALL_LOGO', 'assets/images/logo-dark.png'),
     'prefix' => env('ASHIK_VERSION_UPDATER_PREFIX', 'erp/super-admin'),
     'middleware' => ['web', 'auth', 'super-admin'],
     'layout' => env('ASHIK_VERSION_UPDATER_LAYOUT', 'auto_posts.super_admin.layouts.app'),
